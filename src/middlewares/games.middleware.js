@@ -2,9 +2,18 @@ import { connection } from "../database/database.js";
 import { STATUS_CODE } from "../enums/statusCode.js";
 import { schemas } from "../schemas/schemas.js";
 
-async function validadeCategorie(req, res, next) {
-	const { name } = req.body;
-	const { error } = schemas.categoriePOST.validate({ name });
+async function validadeGame(req, res, next) {
+	const { name, image, stockTotal, categoryId, pricePerDay } = req.body;
+	const { error } = schemas.gamePOST.validate(
+		{
+			name,
+			image,
+			stockTotal,
+			categoryId,
+			pricePerDay,
+		},
+		{ abortEarly: false }
+	);
 
 	if (error) {
 		const message = error.details.map((detail) => detail.message).join(",");
@@ -13,7 +22,7 @@ async function validadeCategorie(req, res, next) {
 
 	try {
 		const query = await connection.query(
-			`SELECT * FROM "categories" WHERE name = $1;`,
+			`SELECT * FROM "games" WHERE name = $1;`,
 			[name]
 		);
 		if (query.rows.length !== 0) {
@@ -28,4 +37,4 @@ async function validadeCategorie(req, res, next) {
 	next();
 }
 
-export { validadeCategorie };
+export { validadeGame };

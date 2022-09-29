@@ -1,8 +1,10 @@
 import { Router } from "express";
-import { categoriesRouter } from "../../../projeto15-boardcamp/src/routes/categories.router.js";
+import { categoriesRouter } from "./categories.router.js";
+import { gamesRouter } from "./games.router.js";
 
 const router = Router();
 
 router.use(categoriesRouter);
+router.use(gamesRouter);
 
 export { router };

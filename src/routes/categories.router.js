@@ -1,13 +1,13 @@
 import { Router } from "express";
+import { validadeCategorie } from "../middlewares/categories.middleware.js";
 import {
-	createCategories,
+	createCategorie,
 	getCategories,
 } from "../controllers/categories.controller.js";
-import { validadeCategorie } from "../middlewares/categories.middleware.js";
 
 const categoriesRouter = Router();
 
-categoriesRouter.post("/categories", validadeCategorie, createCategories);
+categoriesRouter.post("/categories", validadeCategorie, createCategorie);
 categoriesRouter.get("/categories", getCategories);
 
 export { categoriesRouter };

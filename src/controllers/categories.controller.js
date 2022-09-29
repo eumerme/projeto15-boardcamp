@@ -2,11 +2,11 @@ import { connection } from "../database/database.js";
 import { MESSAGE } from "../enums/messages.js";
 import { STATUS_CODE } from "../enums/statusCode.js";
 
-async function createCategories(req, res) {
+async function createCategorie(req, res) {
 	const { name } = req.body;
 
 	try {
-		await connection.query("INSERT INTO categories (name) VALUES ($1);", [
+		await connection.query(`INSERT INTO "categories" ("name") VALUES ($1);`, [
 			name,
 		]);
 
@@ -21,7 +21,7 @@ async function createCategories(req, res) {
 async function getCategories(req, res) {
 	try {
 		const { rows: categories } = await connection.query(
-			"SELECT * FROM categories;"
+			`SELECT * FROM "categories";`
 		);
 
 		return res.status(STATUS_CODE.OK).send(categories);
@@ -32,4 +32,4 @@ async function getCategories(req, res) {
 	}
 }
 
-export { createCategories, getCategories };
+export { createCategorie, getCategories };
