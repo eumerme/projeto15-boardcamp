@@ -18,4 +18,18 @@ async function createCategories(req, res) {
 	}
 }
 
-export { createCategories };
+async function getCategories(req, res) {
+	try {
+		const { rows: categories } = await connection.query(
+			"SELECT * FROM categories;"
+		);
+
+		return res.status(STATUS_CODE.OK).send(categories);
+	} catch (error) {
+		return res
+			.status(STATUS_CODE.SERVER_ERROR)
+			.send({ message: MESSAGE.SERVER_ERROR });
+	}
+}
+
+export { createCategories, getCategories };
