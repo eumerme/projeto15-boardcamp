@@ -3,7 +3,7 @@ import { MESSAGE } from "../enums/messages.js";
 import { STATUS_CODE } from "../enums/statusCode.js";
 import { schemas } from "../schemas/schemas.js";
 
-async function validateCustomer(req, res, next) {
+async function validateCustomerBody(req, res, next) {
 	const { name, phone, cpf, birthday } = req.body;
 
 	const { error } = schemas.customerPOST.validate({
@@ -12,7 +12,6 @@ async function validateCustomer(req, res, next) {
 		cpf,
 		birthday,
 	});
-
 	if (error) {
 		const message = error.details
 			.map((detail) => detail.message)
@@ -39,4 +38,24 @@ async function validateCustomer(req, res, next) {
 	next();
 }
 
-export { validateCustomer };
+async function validateCustomerId(req, res, next) {
+	const { id } = req.params;
+
+	try {
+		const { rows: customerById } = await connection.query(
+			`SELECT * FROM "customers" WHERE id = $1`,
+			[id]
+		);
+		if (customerById.length === 0) {
+			return res.sendStatus(STATUS_CODE.NOT_FOUND);
+		}
+	} catch (error) {
+		return res
+			.status(STATUS_CODE.SERVER_ERROR)
+			.send({ message: MESSAGE.SERVER_ERROR });
+	}
+
+	next();
+}
+
+export { validateCustomerBody, validateCustomerId };

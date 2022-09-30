@@ -41,4 +41,21 @@ async function getCustomers(req, res) {
 	}
 }
 
-export { createCustomer, getCustomers };
+async function getCustomerById(req, res) {
+	const { id } = req.params;
+
+	try {
+		const { rows: customer } = await connection.query(
+			`SELECT * FROM "customers" WHERE id = $1;
+        `,
+			[id]
+		);
+		return res.status(STATUS_CODE.OK).send(customer[0]);
+	} catch (error) {
+		return res
+			.status(STATUS_CODE.SERVER_ERROR)
+			.send({ message: MESSAGE.SERVER_ERROR });
+	}
+}
+
+export { createCustomer, getCustomers, getCustomerById };
