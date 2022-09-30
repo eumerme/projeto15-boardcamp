@@ -27,12 +27,11 @@ async function validateCustomerCpf(req, res, next) {
 	const { cpf } = req.body;
 
 	try {
-		const { rows: customers } = await connection.query(
-			`SELECT * FROM "customers" WHERE cpf = $1;
-        `,
+		const { rows: customer } = await connection.query(
+			`SELECT * FROM "customers" WHERE cpf = $1;`,
 			[cpf]
 		);
-		if (customers.length !== 0) {
+		if (customer.length !== 0) {
 			return res.sendStatus(STATUS_CODE.CONFLICT);
 		}
 	} catch (error) {
@@ -64,4 +63,36 @@ async function validateCustomerId(req, res, next) {
 	next();
 }
 
-export { validateCustomerBody, validateCustomerCpf, validateCustomerId };
+async function validateCpfOwner(req, res, next) {
+	const { cpf } = req.body;
+	const { id } = req.params;
+
+	try {
+		const { rows: customer } = await connection.query(
+			`SELECT * FROM "customers" WHERE id = $1;`,
+			[id]
+		);
+		if (cpf !== customer[0].cpf) {
+			const { rows: cpfExists } = await connection.query(
+				`SELECT * FROM "customers" WHERE cpf = $1;`,
+				[cpf]
+			);
+			if (cpfExists.length !== 0) {
+				return res.sendStatus(STATUS_CODE.CONFLICT);
+			}
+		}
+	} catch (error) {
+		return res
+			.status(STATUS_CODE.SERVER_ERROR)
+			.send({ message: MESSAGE.SERVER_ERROR });
+	}
+
+	next();
+}
+
+export {
+	validateCustomerBody,
+	validateCustomerCpf,
+	validateCustomerId,
+	validateCpfOwner,
+};

@@ -3,14 +3,16 @@ import { STATUS_CODE } from "../enums/statusCode.js";
 import { schemas } from "../schemas/schemas.js";
 
 async function validadeGame(req, res, next) {
+	const { name: title } = req.params;
 	const { name, image, stockTotal, categoryId, pricePerDay } = req.body;
-	const { error } = schemas.gamePOST.validate(
+	const { value, error } = schemas.gamePOST.validate(
 		{
 			name,
 			image,
 			stockTotal,
 			categoryId,
 			pricePerDay,
+			title,
 		},
 		{ abortEarly: false }
 	);
@@ -21,11 +23,11 @@ async function validadeGame(req, res, next) {
 	}
 
 	try {
-		const query = await connection.query(
-			`SELECT * FROM "games" WHERE name = $1;`,
+		const { rows: games } = await connection.query(
+			`SELECT * FROM "games" WHERE "name" = $1;`,
 			[name]
 		);
-		if (query.rows.length !== 0) {
+		if (games.length !== 0) {
 			return res.sendStatus(STATUS_CODE.CONFLICT);
 		}
 	} catch (error) {
@@ -33,6 +35,8 @@ async function validadeGame(req, res, next) {
 			.status(STATUS_CODE.SERVER_ERROR)
 			.send({ message: MESSAGE.SERVER_ERROR });
 	}
+
+	res.locals.title = value.title;
 
 	next();
 }

@@ -10,6 +10,7 @@ const schemas = {
 		stockTotal: Joi.number().greater(0).required(),
 		pricePerDay: Joi.number().greater(0).required(),
 		categoryId: Joi.number().required(),
+		title: Joi.string().trim(),
 	}),
 	customerPOST: Joi.object().keys({
 		name: Joi.string().trim().required(),
@@ -18,6 +19,11 @@ const schemas = {
 		birthday: Joi.string()
 			.pattern(/^\d{4}-\d{2}-\d{2}$/)
 			.required(),
+	}),
+	rentalPOST: Joi.object().keys({
+		customerId: Joi.number().required(),
+		gameId: Joi.number().required(),
+		daysRented: Joi.number().greater(0).required(),
 	}),
 };
 

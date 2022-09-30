@@ -64,7 +64,7 @@ async function updateCustomer(req, res) {
 
 	try {
 		await connection.query(
-			`UPDATE "customers" SET name = $1, phone = $2, cpf = $3, birthday = $4 WHERE id = $5;`,
+			`UPDATE "customers" SET "name" = $1, "phone" = $2, "cpf" = $3, "birthday" = $4 WHERE id = $5;`,
 			[name, phone, cpf, birthday, id]
 		);
 		return res.sendStatus(STATUS_CODE.OK);

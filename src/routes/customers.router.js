@@ -3,6 +3,7 @@ import {
 	validateCustomerBody,
 	validateCustomerCpf,
 	validateCustomerId,
+	validateCpfOwner,
 } from "../middlewares/customers.middleware.js";
 import {
 	createCustomer,
@@ -21,6 +22,11 @@ customersRouter.post(
 );
 customersRouter.get("/customers", getCustomers);
 customersRouter.get("/customers/:id", validateCustomerId, getCustomerById);
-customersRouter.put("/customers/:id", validateCustomerBody, updateCustomer);
+customersRouter.put(
+	"/customers/:id",
+	validateCustomerBody,
+	validateCpfOwner,
+	updateCustomer
+);
 
 export { customersRouter };
