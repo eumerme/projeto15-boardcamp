@@ -20,7 +20,7 @@ async function createGame(req, res) {
 }
 
 async function getGames(req, res) {
-	const { title: name } = res.locals;
+	const { name } = res.locals;
 
 	try {
 		if (name) {

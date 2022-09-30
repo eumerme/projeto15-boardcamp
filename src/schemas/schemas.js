@@ -10,8 +10,8 @@ const schemas = {
 		stockTotal: Joi.number().greater(0).required(),
 		pricePerDay: Joi.number().greater(0).required(),
 		categoryId: Joi.number().required(),
-		title: Joi.string().trim(),
 	}),
+	queryGamePOST: Joi.object().keys({ name: Joi.string().trim() }),
 	customerPOST: Joi.object().keys({
 		name: Joi.string().trim().required(),
 		phone: Joi.string().alphanum().min(10).max(11).required(),
