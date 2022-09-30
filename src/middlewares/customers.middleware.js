@@ -1,5 +1,4 @@
 import { connection } from "../database/database.js";
-import { MESSAGE } from "../enums/messages.js";
 import { STATUS_CODE } from "../enums/statusCode.js";
 import { schemas } from "../schemas/schemas.js";
 
@@ -35,9 +34,8 @@ async function validateCustomerCpf(req, res, next) {
 			return res.sendStatus(STATUS_CODE.CONFLICT);
 		}
 	} catch (error) {
-		return res
-			.status(STATUS_CODE.SERVER_ERROR)
-			.send({ message: MESSAGE.SERVER_ERROR });
+		rconsole.log(error);
+		return res.sendStatus(STATUS_CODE.SERVER_ERROR);
 	}
 
 	next();
@@ -55,9 +53,8 @@ async function validateCustomerId(req, res, next) {
 			return res.sendStatus(STATUS_CODE.NOT_FOUND);
 		}
 	} catch (error) {
-		return res
-			.status(STATUS_CODE.SERVER_ERROR)
-			.send({ message: MESSAGE.SERVER_ERROR });
+		console.log(error);
+		return res.sendStatus(STATUS_CODE.SERVER_ERROR);
 	}
 
 	next();
@@ -82,9 +79,8 @@ async function validateCpfOwner(req, res, next) {
 			}
 		}
 	} catch (error) {
-		return res
-			.status(STATUS_CODE.SERVER_ERROR)
-			.send({ message: MESSAGE.SERVER_ERROR });
+		console.log(error);
+		return res.sendStatus(STATUS_CODE.SERVER_ERROR);
 	}
 
 	next();

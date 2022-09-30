@@ -1,5 +1,4 @@
 import { connection } from "../database/database.js";
-import { MESSAGE } from "../enums/messages.js";
 import { STATUS_CODE } from "../enums/statusCode.js";
 
 async function createRental(req, res) {

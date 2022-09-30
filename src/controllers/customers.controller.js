@@ -1,5 +1,4 @@
 import { connection } from "../database/database.js";
-import { MESSAGE } from "../enums/messages.js";
 import { STATUS_CODE } from "../enums/statusCode.js";
 
 async function createCustomer(req, res) {
@@ -12,9 +11,8 @@ async function createCustomer(req, res) {
 		);
 		return res.sendStatus(STATUS_CODE.CREATED);
 	} catch (error) {
-		return res
-			.status(STATUS_CODE.SERVER_ERROR)
-			.send({ message: MESSAGE.SERVER_ERROR });
+		console.log(error);
+		return res.sendStatus(STATUS_CODE.SERVER_ERROR);
 	}
 }
 
@@ -35,9 +33,8 @@ async function getCustomers(req, res) {
 		);
 		return res.status(STATUS_CODE.OK).send(customers);
 	} catch (error) {
-		return res
-			.status(STATUS_CODE.SERVER_ERROR)
-			.send({ message: MESSAGE.SERVER_ERROR });
+		console.log(error);
+		return res.sendStatus(STATUS_CODE.SERVER_ERROR);
 	}
 }
 
@@ -52,9 +49,8 @@ async function getCustomerById(req, res) {
 		);
 		return res.status(STATUS_CODE.OK).send(customer[0]);
 	} catch (error) {
-		return res
-			.status(STATUS_CODE.SERVER_ERROR)
-			.send({ message: MESSAGE.SERVER_ERROR });
+		console.log(error);
+		return res.sendStatus(STATUS_CODE.SERVER_ERROR);
 	}
 }
 
@@ -69,9 +65,8 @@ async function updateCustomer(req, res) {
 		);
 		return res.sendStatus(STATUS_CODE.OK);
 	} catch (error) {
-		return res
-			.status(STATUS_CODE.SERVER_ERROR)
-			.send({ message: MESSAGE.SERVER_ERROR });
+		console.log(error);
+		return res.sendStatus(STATUS_CODE.SERVER_ERROR);
 	}
 }
 

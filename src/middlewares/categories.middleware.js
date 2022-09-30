@@ -20,9 +20,8 @@ async function validadeCategory(req, res, next) {
 			return res.sendStatus(STATUS_CODE.CONFLICT);
 		}
 	} catch (error) {
-		return res
-			.status(STATUS_CODE.SERVER_ERROR)
-			.send({ message: MESSAGE.SERVER_ERROR });
+		console.log(error);
+		return res.sendStatus(STATUS_CODE.SERVER_ERROR);
 	}
 
 	next();

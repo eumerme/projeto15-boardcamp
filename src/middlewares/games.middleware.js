@@ -14,7 +14,6 @@ async function validadeGame(req, res, next) {
 		},
 		{ abortEarly: false }
 	);
-
 	if (error) {
 		const message = error.details.map((detail) => detail.message).join(",");
 		return res.status(STATUS_CODE.BAD_REQUEST).send({ message });
@@ -29,9 +28,8 @@ async function validadeGame(req, res, next) {
 			return res.sendStatus(STATUS_CODE.CONFLICT);
 		}
 	} catch (error) {
-		return res
-			.status(STATUS_CODE.SERVER_ERROR)
-			.send({ message: MESSAGE.SERVER_ERROR });
+		console.log(error);
+		return res.sendStatus(STATUS_CODE.SERVER_ERROR);
 	}
 
 	next();
