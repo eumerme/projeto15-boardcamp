@@ -2,7 +2,7 @@ import { connection } from "../database/database.js";
 import { STATUS_CODE } from "../enums/statusCode.js";
 import { schemas } from "../schemas/schemas.js";
 
-async function validadeCategorie(req, res, next) {
+async function validadeCategory(req, res, next) {
 	const { name } = req.body;
 	const { error } = schemas.categoriePOST.validate({ name });
 
@@ -28,4 +28,4 @@ async function validadeCategorie(req, res, next) {
 	next();
 }
 
-export { validadeCategorie };
+export { validadeCategory };

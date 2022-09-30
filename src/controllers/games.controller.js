@@ -19,4 +19,26 @@ async function createGame(req, res) {
 	}
 }
 
-export { createGame };
+async function getGames(req, res) {
+	const { name } = req.query;
+
+	try {
+		if (name) {
+			const { rows: gamesFiltered } = await connection.query(
+				`SELECT * FROM "games" WHERE LOWER (name) LIKE $1;
+			`,
+				[`%${name}%`]
+			);
+			return res.status(STATUS_CODE.OK).send(gamesFiltered);
+		}
+
+		const { rows: games } = await connection.query(`SELECT * FROM "games";`);
+		return res.status(STATUS_CODE.OK).send(games);
+	} catch (error) {
+		return res
+			.status(STATUS_CODE.SERVER_ERROR)
+			.send({ message: MESSAGE.SERVER_ERROR });
+	}
+}
+
+export { createGame, getGames };

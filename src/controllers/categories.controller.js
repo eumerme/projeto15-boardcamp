@@ -2,7 +2,7 @@ import { connection } from "../database/database.js";
 import { MESSAGE } from "../enums/messages.js";
 import { STATUS_CODE } from "../enums/statusCode.js";
 
-async function createCategorie(req, res) {
+async function createCategory(req, res) {
 	const { name } = req.body;
 
 	try {
@@ -32,4 +32,4 @@ async function getCategories(req, res) {
 	}
 }
 
-export { createCategorie, getCategories };
+export { createCategory, getCategories };
