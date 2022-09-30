@@ -20,6 +20,12 @@ async function validateCustomerBody(req, res, next) {
 		return res.status(STATUS_CODE.BAD_REQUEST).send({ message });
 	}
 
+	next();
+}
+
+async function validateCustomerCpf(req, res, next) {
+	const { cpf } = req.body;
+
 	try {
 		const { rows: customers } = await connection.query(
 			`SELECT * FROM "customers" WHERE cpf = $1;
@@ -43,7 +49,7 @@ async function validateCustomerId(req, res, next) {
 
 	try {
 		const { rows: customerById } = await connection.query(
-			`SELECT * FROM "customers" WHERE id = $1`,
+			`SELECT * FROM "customers" WHERE id = $1;`,
 			[id]
 		);
 		if (customerById.length === 0) {
@@ -58,4 +64,4 @@ async function validateCustomerId(req, res, next) {
 	next();
 }
 
-export { validateCustomerBody, validateCustomerId };
+export { validateCustomerBody, validateCustomerCpf, validateCustomerId };
