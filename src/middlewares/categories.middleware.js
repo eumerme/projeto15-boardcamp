@@ -4,7 +4,7 @@ import { schemas } from "../schemas/schemas.js";
 
 async function validadeCategory(req, res, next) {
 	const { name } = req.body;
-	const { error } = schemas.categoriePOST.validate({ name });
+	const { error } = schemas.categoryPOST.validate({ name });
 
 	if (error) {
 		const message = error.details.map((detail) => detail.message).join(",");
@@ -12,11 +12,11 @@ async function validadeCategory(req, res, next) {
 	}
 
 	try {
-		const query = await connection.query(
+		const { rows: categories } = await connection.query(
 			`SELECT * FROM "categories" WHERE name = $1;`,
 			[name]
 		);
-		if (query.rows.length !== 0) {
+		if (categories.length !== 0) {
 			return res.sendStatus(STATUS_CODE.CONFLICT);
 		}
 	} catch (error) {

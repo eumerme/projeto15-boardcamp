@@ -9,7 +9,6 @@ async function createCategory(req, res) {
 		await connection.query(`INSERT INTO "categories" ("name") VALUES ($1);`, [
 			name,
 		]);
-
 		return res.sendStatus(STATUS_CODE.CREATED);
 	} catch (error) {
 		return res
@@ -23,7 +22,6 @@ async function getCategories(req, res) {
 		const { rows: categories } = await connection.query(
 			`SELECT * FROM "categories";`
 		);
-
 		return res.status(STATUS_CODE.OK).send(categories);
 	} catch (error) {
 		return res
