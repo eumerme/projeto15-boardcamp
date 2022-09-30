@@ -18,4 +18,27 @@ async function createCustomer(req, res) {
 	}
 }
 
-export { createCustomer };
+async function getCustomers(req, res) {
+	const { cpf } = req.query;
+
+	try {
+		if (cpf) {
+			const { rows: customersFiltered } = await connection.query(
+				`SELECT * FROM "customers" WHERE (cpf) LIKE $1;`,
+				[`${cpf}%`]
+			);
+			return res.status(STATUS_CODE.OK).send(customersFiltered);
+		}
+
+		const { rows: customers } = await connection.query(
+			`SELECT * FROM "customers";`
+		);
+		return res.status(STATUS_CODE.OK).send(customers);
+	} catch (error) {
+		return res
+			.status(STATUS_CODE.SERVER_ERROR)
+			.send({ message: MESSAGE.SERVER_ERROR });
+	}
+}
+
+export { createCustomer, getCustomers };
