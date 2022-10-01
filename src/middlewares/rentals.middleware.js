@@ -77,6 +77,7 @@ async function validadeQueryRental(req, res, next) {
 }
 
 async function validadeRental(req, res, next) {
+	const { path } = req.route;
 	let { id } = req.params;
 	id = id.trim();
 
@@ -96,7 +97,10 @@ async function validadeRental(req, res, next) {
 		if (rental.length === 0) {
 			return res.sendStatus(STATUS_CODE.NOT_FOUND);
 		}
-		if (rental[0].returnDate) {
+		if (rental[0].returnDate && path === "/rentals/:id/return") {
+			return res.sendStatus(STATUS_CODE.BAD_REQUEST);
+		}
+		if (!rental[0].returnDate && path === "/rentals/:id") {
 			return res.sendStatus(STATUS_CODE.BAD_REQUEST);
 		}
 	} catch (error) {
