@@ -29,6 +29,9 @@ const schemas = {
 		customerId: Joi.number().positive().integer(),
 		gameId: Joi.number().positive().integer(),
 	}),
+	paramsRentalPOST: Joi.object().keys({
+		id: Joi.number().positive().integer(),
+	}),
 };
 
 export { schemas };

@@ -9,7 +9,7 @@ async function validateRentalBody(req, res, next) {
 		return res.sendStatus(STATUS_CODE.BAD_REQUEST);
 	}
 
-	const { value: body, error } = schemas.rentalPOST.validate(
+	const { error } = schemas.rentalPOST.validate(
 		{
 			customerId,
 			gameId,
@@ -50,28 +50,63 @@ async function validadeQueryRental(req, res, next) {
 	let validateSchema;
 
 	if (customerId) {
-		customerId = Number(customerId.trim());
+		customerId = customerId.trim();
 		validateSchema = schemas.queryRentalGET.validate({
 			customerId,
 		});
 	}
+
 	if (gameId) {
-		gameId = Number(gameId.trim());
+		gameId = gameId.trim();
 		validateSchema = schemas.queryRentalGET.validate({
 			gameId,
 		});
 	}
 
-	if (validateSchema.error) {
+	if (validateSchema?.error) {
 		const message = validateSchema.error.details
 			.map((detail) => detail.message)
 			.join(",");
 		return res.status(STATUS_CODE.BAD_REQUEST).send({ message });
 	}
 
-	res.locals = validateSchema.value;
+	res.locals.customerId = validateSchema?.value.customerId;
+	res.locals.gameId = validateSchema?.value.gameId;
 
 	next();
 }
 
-export { validateRentalBody, validadeQueryRental };
+async function validadeRental(req, res, next) {
+	let { id } = req.params;
+	id = id.trim();
+
+	const { value, error } = schemas.paramsRentalPOST.validate({
+		id,
+	});
+	if (error) {
+		const message = error.details.map((detail) => detail.message).join(",");
+		return res.status(STATUS_CODE.BAD_REQUEST).send({ message });
+	}
+
+	try {
+		const { rows: rental } = await connection.query(
+			`SELECT * FROM "rentals" WHERE id = $1;`,
+			[id]
+		);
+		if (rental.length === 0) {
+			return res.sendStatus(STATUS_CODE.NOT_FOUND);
+		}
+		if (rental[0].returnDate) {
+			return res.sendStatus(STATUS_CODE.BAD_REQUEST);
+		}
+	} catch (error) {
+		console.log(error);
+		return res.sendStatus(STATUS_CODE.SERVER_ERROR);
+	}
+
+	res.locals.id = value.id;
+
+	next();
+}
+
+export { validateRentalBody, validadeQueryRental, validadeRental };

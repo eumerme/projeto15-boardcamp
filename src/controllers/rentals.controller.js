@@ -1,9 +1,10 @@
+import dayjs from "dayjs";
 import { connection } from "../database/database.js";
 import { STATUS_CODE } from "../enums/statusCode.js";
 
 async function createRental(req, res) {
 	const { customerId, gameId, daysRented } = req.body;
-	const rentDate = new Date().toISOString().slice(0, 10);
+	const rentDate = dayjs().format("YYYY-MM-DD");
 	const returnDate = null;
 	const delayFee = null;
 
@@ -113,4 +114,68 @@ async function getRentals(req, res) {
 	}
 }
 
-export { createRental, getRentals };
+function createRentalBody({ rentals }) {
+	const expectedReturnDate = dayjs(rentals.rentDate)
+		.add(rentals.daysRented, "days")
+		.format("YYYY-MM-DD");
+	const returnDate = dayjs();
+	const rentDate = dayjs(rentals.rentDate).format("YYYY-MM-DD");
+	const daysRented = dayjs(returnDate).diff(rentDate, "day");
+
+	if (daysRented > rentals.daysRented) {
+		const delayFee = dayjs(returnDate).diff(expectedReturnDate, "day");
+		rentals.delayFee = delayFee * rentals.game.pricePerDay;
+	} else {
+		rentals.delayFee = 0;
+	}
+	rentals.returnDate = returnDate;
+
+	return rentals;
+}
+
+async function finalizeRental(req, res) {
+	const { id } = res.locals;
+
+	try {
+		let { rows: rentals } = await connection.query(
+			`SELECT 
+			rentals.*
+			, json_build_object(
+				'id', games.id
+				, 'stockTotal', games."stockTotal"
+				, 'pricePerDay', games."pricePerDay"
+			)
+				AS game
+			FROM rentals
+				JOIN games
+					ON rentals."gameId" = games.id
+			WHERE rentals.id = $1
+		;`,
+			[id]
+		);
+
+		rentals = rentals[0];
+		const rentalBody = createRentalBody({ rentals });
+
+		await connection.query(
+			`UPDATE	"rentals" 
+				SET
+					"returnDate" = $1
+					, "delayFee" = $2
+				WHERE id = $3;`,
+			[rentalBody.returnDate, rentalBody.delayFee, rentalBody.id]
+		);
+
+		await connection.query(
+			`UPDATE "games" SET "stockTotal" = ("stockTotal" + 1) WHERE id = $1;`,
+			[rentalBody.game.id]
+		);
+
+		return res.sendStatus(STATUS_CODE.OK);
+	} catch (error) {
+		console.log(error);
+		return res.sendStatus(STATUS_CODE.SERVER_ERROR);
+	}
+}
+
+export { createRental, getRentals, finalizeRental };
