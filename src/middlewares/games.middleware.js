@@ -37,7 +37,7 @@ async function validadeGame(req, res, next) {
 
 async function validadeQueryGame(req, res, next) {
 	const { name } = req.query;
-	const { value, error } = schemas.queryGamePOST.validate({
+	const { value, error } = schemas.queryGameGET.validate({
 		name,
 	});
 
@@ -49,4 +49,5 @@ async function validadeQueryGame(req, res, next) {
 	res.locals.name = value.name;
 	next();
 }
+
 export { validadeGame, validadeQueryGame };

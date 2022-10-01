@@ -27,6 +27,11 @@ async function getGames(req, res) {
 			`,
 				[`%${name}%`]
 			);
+
+			if (gamesFiltered.length === 0) {
+				return res.sendStatus(STATUS_CODE.NOT_FOUND);
+			}
+
 			return res.status(STATUS_CODE.OK).send(gamesFiltered);
 		}
 

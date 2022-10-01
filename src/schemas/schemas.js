@@ -11,7 +11,7 @@ const schemas = {
 		pricePerDay: Joi.number().greater(0).required(),
 		categoryId: Joi.number().required(),
 	}),
-	queryGamePOST: Joi.object().keys({ name: Joi.string().trim() }),
+	queryGameGET: Joi.object().keys({ name: Joi.string().trim() }),
 	customerPOST: Joi.object().keys({
 		name: Joi.string().trim().required(),
 		phone: Joi.string().alphanum().min(10).max(11).required(),
@@ -24,6 +24,10 @@ const schemas = {
 		customerId: Joi.number().required(),
 		gameId: Joi.number().required(),
 		daysRented: Joi.number().greater(0).required(),
+	}),
+	queryRentalGET: Joi.object().keys({
+		customerId: Joi.number().positive().integer(),
+		gameId: Joi.number().positive().integer(),
 	}),
 };
 

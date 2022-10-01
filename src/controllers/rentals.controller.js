@@ -27,6 +27,11 @@ async function createRental(req, res) {
 			]
 		);
 
+		await connection.query(
+			`UPDATE "games" SET "stockTotal" = ("stockTotal" - 1) WHERE id = $1;`,
+			[gameId]
+		);
+
 		return res.sendStatus(STATUS_CODE.CREATED);
 	} catch (error) {
 		console.log(error);
@@ -34,4 +39,78 @@ async function createRental(req, res) {
 	}
 }
 
-export { createRental };
+async function getRentals(req, res) {
+	const { customerId, gameId } = res.locals;
+	let type, id;
+
+	try {
+		if (customerId) {
+			type = "customerId";
+			id = customerId;
+		}
+		if (gameId) {
+			type = "gameId";
+			id = gameId;
+		}
+		if (id) {
+			const { rows: rentalsById } = await connection.query(
+				`
+				SELECT 
+					rentals.*
+					, json_build_object(
+						'id', customers.id
+						, 'name', customers.name
+					) 
+						AS customer
+					, json_build_object(
+						'id', games.id
+						, 'name', games.name
+						, 'categoryId', games."categoryId"
+						, 'categoryName', categories.name
+					)
+						AS game
+					FROM rentals
+						JOIN customers
+							ON rentals."customerId" = customers.id
+						JOIN games
+							ON rentals."gameId" = games.id
+						JOIN categories
+							ON games."categoryId" = categories.id
+					WHERE rentals."${type}" = $1
+				;`,
+				[id]
+			);
+			return res.status(STATUS_CODE.OK).send(rentalsById);
+		}
+
+		const { rows: rentals } = await connection.query(`
+			SELECT 
+				rentals.*
+				, json_build_object(
+					'id', customers.id
+					, 'name', customers.name
+				) 
+					AS customer
+				, json_build_object(
+					'id', games.id
+					, 'name', games.name
+					, 'categoryId', games."categoryId"
+					, 'categoryName', categories.name
+				)
+					AS game
+				FROM rentals
+					JOIN customers
+						ON rentals."customerId" = customers.id
+					JOIN games
+						ON rentals."gameId" = games.id
+					JOIN categories
+						ON games."categoryId" = categories.id
+		;`);
+		return res.status(STATUS_CODE.OK).send(rentals);
+	} catch (error) {
+		console.log(error);
+		return res.sendStatus(STATUS_CODE.SERVER_ERROR);
+	}
+}
+
+export { createRental, getRentals };
