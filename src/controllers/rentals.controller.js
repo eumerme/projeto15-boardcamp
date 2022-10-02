@@ -16,7 +16,16 @@ async function createRental(req, res) {
 		const originalPrice = Number(daysRented) * game[0].pricePerDay;
 
 		await connection.query(
-			`INSERT INTO "rentals" ("customerId", "gameId", "rentDate", "daysRented", "returnDate", "originalPrice", "delayFee") VALUES ($1, $2, $3, $4, $5, $6, $7);`,
+			`INSERT INTO "rentals" 
+				("customerId"
+				, "gameId"
+				, "rentDate"
+				, "daysRented"
+				, "returnDate"
+				, "originalPrice"
+				, "delayFee") 
+				VALUES 
+					($1, $2, $3, $4, $5, $6, $7);`,
 			[
 				customerId,
 				gameId,
@@ -53,38 +62,9 @@ async function getRentals(req, res) {
 			type = "gameId";
 			id = gameId;
 		}
-		if (id) {
-			const { rows: rentalsById } = await connection.query(
-				`
-				SELECT 
-					rentals.*
-					, json_build_object(
-						'id', customers.id
-						, 'name', customers.name
-					) 
-						AS customer
-					, json_build_object(
-						'id', games.id
-						, 'name', games.name
-						, 'categoryId', games."categoryId"
-						, 'categoryName', categories.name
-					)
-						AS game
-					FROM rentals
-						JOIN customers
-							ON rentals."customerId" = customers.id
-						JOIN games
-							ON rentals."gameId" = games.id
-						JOIN categories
-							ON games."categoryId" = categories.id
-					WHERE rentals."${type}" = $1
-				;`,
-				[id]
-			);
-			return res.status(STATUS_CODE.OK).send(rentalsById);
-		}
 
-		const { rows: rentals } = await connection.query(`
+		const { rows: rentals } = await connection.query(
+			`
 			SELECT 
 				rentals.*
 				, json_build_object(
@@ -106,7 +86,10 @@ async function getRentals(req, res) {
 						ON rentals."gameId" = games.id
 					JOIN categories
 						ON games."categoryId" = categories.id
-		;`);
+				${id ? `WHERE rentals."${type}" = $1` : ""}
+		;`,
+			id ? [id] : ""
+		);
 		return res.status(STATUS_CODE.OK).send(rentals);
 	} catch (error) {
 		console.log(error);

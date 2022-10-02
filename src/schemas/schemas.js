@@ -6,7 +6,7 @@ const schemas = {
 	}),
 	gamePOST: Joi.object().keys({
 		name: Joi.string().trim().required(),
-		image: Joi.string().trim().base64().required(),
+		image: Joi.string().trim().required(),
 		stockTotal: Joi.number().greater(0).required(),
 		pricePerDay: Joi.number().greater(0).required(),
 		categoryId: Joi.number().required(),
