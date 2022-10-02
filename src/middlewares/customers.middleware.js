@@ -12,10 +12,7 @@ async function validateCustomerBody(req, res, next) {
 		birthday,
 	});
 	if (error) {
-		const message = error.details
-			.map((detail) => detail.message)
-			.join(",")
-			.replace("/^\\d{4}-\\d{2}-\\d{2}$/", "YYYY-MM-DD");
+		const message = error.details.map((detail) => detail.message).join(",");
 		return res.status(STATUS_CODE.BAD_REQUEST).send({ message });
 	}
 
@@ -69,6 +66,9 @@ async function validateCpfOwner(req, res, next) {
 			`SELECT * FROM "customers" WHERE id = $1;`,
 			[id]
 		);
+		if (customer.length === 0) {
+			return res.sendStatus(STATUS_CODE.NOT_FOUND);
+		}
 		if (cpf !== customer[0].cpf) {
 			const { rows: cpfExists } = await connection.query(
 				`SELECT * FROM "customers" WHERE cpf = $1;`,

@@ -6,7 +6,7 @@ const schemas = {
 	}),
 	gamePOST: Joi.object().keys({
 		name: Joi.string().trim().required(),
-		image: Joi.string().trim().required(),
+		image: Joi.string().trim().base64().required(),
 		stockTotal: Joi.number().greater(0).required(),
 		pricePerDay: Joi.number().greater(0).required(),
 		categoryId: Joi.number().required(),
@@ -16,9 +16,7 @@ const schemas = {
 		name: Joi.string().trim().required(),
 		phone: Joi.string().alphanum().min(10).max(11).required(),
 		cpf: Joi.string().alphanum().length(11).required(),
-		birthday: Joi.string()
-			.pattern(/^\d{4}-\d{2}-\d{2}$/)
-			.required(),
+		birthday: Joi.string().isoDate().required(),
 	}),
 	rentalPOST: Joi.object().keys({
 		customerId: Joi.number().required(),
@@ -29,7 +27,7 @@ const schemas = {
 		customerId: Joi.number().positive().integer(),
 		gameId: Joi.number().positive().integer(),
 	}),
-	paramsRentalPOST: Joi.object().keys({
+	paramsId: Joi.object().keys({
 		id: Joi.number().positive().integer(),
 	}),
 };

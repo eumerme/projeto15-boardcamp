@@ -81,7 +81,7 @@ async function validadeRental(req, res, next) {
 	let { id } = req.params;
 	id = id.trim();
 
-	const { value, error } = schemas.paramsRentalPOST.validate({
+	const { value, error } = schemas.paramsId.validate({
 		id,
 	});
 	if (error) {
