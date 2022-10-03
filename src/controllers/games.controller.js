@@ -6,14 +6,20 @@ async function createGame(req, res) {
 
 	try {
 		await connection.query(
-			`INSERT INTO "games" ("name", "image", "stockTotal", "categoryId", "pricePerDay") VALUES ($1, $2, $3, $4, $5);`,
+			`INSERT INTO "games"
+				("name"
+				, "image"
+				, "stockTotal"
+				, "categoryId"
+				, "pricePerDay") 
+				VALUES 
+					($1, $2, $3, $4, $5);`,
 			[name, image, stockTotal, categoryId, pricePerDay]
 		);
 
 		return res.sendStatus(STATUS_CODE.CREATED);
 	} catch (error) {
-		console.log(error);
-		return res.sendStatus(STATUS_CODE.SERVER_ERROR);
+		return res.status(STATUS_CODE.SERVER_ERROR).send(error);
 	}
 }
 
@@ -23,8 +29,7 @@ async function getGames(req, res) {
 	try {
 		if (name) {
 			const { rows: gamesFiltered } = await connection.query(
-				`SELECT * FROM "games" WHERE LOWER (name) LIKE $1;
-			`,
+				`SELECT * FROM "games" WHERE LOWER (name) LIKE $1;`,
 				[`%${name}%`]
 			);
 
@@ -38,8 +43,7 @@ async function getGames(req, res) {
 		const { rows: games } = await connection.query(`SELECT * FROM "games";`);
 		return res.status(STATUS_CODE.OK).send(games);
 	} catch (error) {
-		console.log(error);
-		return res.sendStatus(STATUS_CODE.SERVER_ERROR);
+		return res.status(STATUS_CODE.SERVER_ERROR).send(error);
 	}
 }
 

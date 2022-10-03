@@ -44,8 +44,7 @@ async function createRental(req, res) {
 
 		return res.sendStatus(STATUS_CODE.CREATED);
 	} catch (error) {
-		console.log(error);
-		return res.sendStatus(STATUS_CODE.SERVER_ERROR);
+		return res.status(STATUS_CODE.SERVER_ERROR).send(error);
 	}
 }
 
@@ -92,8 +91,7 @@ async function getRentals(req, res) {
 		);
 		return res.status(STATUS_CODE.OK).send(rentals);
 	} catch (error) {
-		console.log(error);
-		return res.sendStatus(STATUS_CODE.SERVER_ERROR);
+		return res.status(STATUS_CODE.SERVER_ERROR).send(error);
 	}
 }
 
@@ -101,7 +99,7 @@ function createRentalBody({ rentals }) {
 	const expectedReturnDate = dayjs(rentals.rentDate)
 		.add(rentals.daysRented, "days")
 		.format("YYYY-MM-DD");
-	const returnDate = dayjs();
+	const returnDate = dayjs().format("YYYY-MM-DD");
 	const rentDate = dayjs(rentals.rentDate).format("YYYY-MM-DD");
 	const daysRented = dayjs(returnDate).diff(rentDate, "day");
 
@@ -141,11 +139,7 @@ async function finalizeRental(req, res) {
 		const rentalBody = createRentalBody({ rentals });
 
 		await connection.query(
-			`UPDATE	"rentals" 
-				SET
-					"returnDate" = $1
-					, "delayFee" = $2
-				WHERE id = $3;`,
+			`UPDATE	"rentals" SET "returnDate" = $1, "delayFee" = $2 WHERE id = $3;`,
 			[rentalBody.returnDate, rentalBody.delayFee, rentalBody.id]
 		);
 
@@ -156,8 +150,7 @@ async function finalizeRental(req, res) {
 
 		return res.sendStatus(STATUS_CODE.OK);
 	} catch (error) {
-		console.log(error);
-		return res.sendStatus(STATUS_CODE.SERVER_ERROR);
+		return res.status(STATUS_CODE.SERVER_ERROR).send(error);
 	}
 }
 
@@ -168,8 +161,7 @@ async function deleteRental(req, res) {
 		await connection.query(`DELETE FROM rentals WHERE id = $1;`, [id]);
 		return res.sendStatus(STATUS_CODE.OK);
 	} catch (error) {
-		console.log(error);
-		return res.sendStatus(STATUS_CODE.SERVER_ERROR);
+		return res.status(STATUS_CODE.SERVER_ERROR).send(error);
 	}
 }
 

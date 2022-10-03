@@ -31,8 +31,7 @@ async function validateCustomerCpf(req, res, next) {
 			return res.sendStatus(STATUS_CODE.CONFLICT);
 		}
 	} catch (error) {
-		rconsole.log(error);
-		return res.sendStatus(STATUS_CODE.SERVER_ERROR);
+		return res.status(STATUS_CODE.SERVER_ERROR).send(error);
 	}
 
 	next();
@@ -50,8 +49,7 @@ async function validateCustomerId(req, res, next) {
 			return res.sendStatus(STATUS_CODE.NOT_FOUND);
 		}
 	} catch (error) {
-		console.log(error);
-		return res.sendStatus(STATUS_CODE.SERVER_ERROR);
+		return res.status(STATUS_CODE.SERVER_ERROR).send(error);
 	}
 
 	next();
@@ -79,8 +77,7 @@ async function validateCpfOwner(req, res, next) {
 			}
 		}
 	} catch (error) {
-		console.log(error);
-		return res.sendStatus(STATUS_CODE.SERVER_ERROR);
+		return res.status(STATUS_CODE.SERVER_ERROR).send(error);
 	}
 
 	next();

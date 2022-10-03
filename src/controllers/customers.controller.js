@@ -11,8 +11,7 @@ async function createCustomer(req, res) {
 		);
 		return res.sendStatus(STATUS_CODE.CREATED);
 	} catch (error) {
-		console.log(error);
-		return res.sendStatus(STATUS_CODE.SERVER_ERROR);
+		return res.status(STATUS_CODE.SERVER_ERROR).send(error);
 	}
 }
 
@@ -33,8 +32,7 @@ async function getCustomers(req, res) {
 		);
 		return res.status(STATUS_CODE.OK).send(customers);
 	} catch (error) {
-		console.log(error);
-		return res.sendStatus(STATUS_CODE.SERVER_ERROR);
+		return res.status(STATUS_CODE.SERVER_ERROR).send(error);
 	}
 }
 
@@ -49,8 +47,7 @@ async function getCustomerById(req, res) {
 		);
 		return res.status(STATUS_CODE.OK).send(customer[0]);
 	} catch (error) {
-		console.log(error);
-		return res.sendStatus(STATUS_CODE.SERVER_ERROR);
+		return res.status(STATUS_CODE.SERVER_ERROR).send(error);
 	}
 }
 
@@ -60,13 +57,13 @@ async function updateCustomer(req, res) {
 
 	try {
 		await connection.query(
-			`UPDATE "customers" SET "name" = $1, "phone" = $2, "cpf" = $3, "birthday" = $4 WHERE id = $5;`,
+			`UPDATE "customers" 
+				SET "name" = $1, "phone" = $2, "cpf" = $3, "birthday" = $4 WHERE id = $5;`,
 			[name, phone, cpf, birthday, id]
 		);
 		return res.sendStatus(STATUS_CODE.OK);
 	} catch (error) {
-		console.log(error);
-		return res.sendStatus(STATUS_CODE.SERVER_ERROR);
+		return res.status(STATUS_CODE.SERVER_ERROR).send(error);
 	}
 }
 

@@ -10,8 +10,7 @@ async function createCategory(req, res) {
 		]);
 		return res.sendStatus(STATUS_CODE.CREATED);
 	} catch (error) {
-		console.log(error);
-		return res.sendStatus(STATUS_CODE.SERVER_ERROR);
+		return res.status(STATUS_CODE.SERVER_ERROR).send(error);
 	}
 }
 
@@ -22,8 +21,7 @@ async function getCategories(req, res) {
 		);
 		return res.status(STATUS_CODE.OK).send(categories);
 	} catch (error) {
-		console.log(error);
-		return res.sendStatus(STATUS_CODE.SERVER_ERROR);
+		return res.status(STATUS_CODE.SERVER_ERROR).send(error);
 	}
 }
 
