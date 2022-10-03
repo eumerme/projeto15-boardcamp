@@ -27,20 +27,20 @@ async function getGames(req, res) {
 	const { name } = res.locals;
 
 	try {
-		if (name) {
-			const { rows: gamesFiltered } = await connection.query(
-				`SELECT * FROM "games" WHERE LOWER (name) LIKE $1;`,
-				[`%${name}%`]
-			);
-
-			if (gamesFiltered.length === 0) {
-				return res.sendStatus(STATUS_CODE.NOT_FOUND);
-			}
-
-			return res.status(STATUS_CODE.OK).send(gamesFiltered);
+		const { rows: games } = await connection.query(
+			`SELECT 
+				games.*
+				, categories.name AS "categoryName" 
+				FROM games 
+				JOIN categories 
+					ON games."categoryId" = categories.id 
+				${name ? `WHERE games.name ILIKE $1` : ""};`,
+			name ? [`${name}%`] : ""
+		);
+		if (games.length === 0) {
+			return res.sendStatus(STATUS_CODE.NOT_FOUND);
 		}
 
-		const { rows: games } = await connection.query(`SELECT * FROM "games";`);
 		return res.status(STATUS_CODE.OK).send(games);
 	} catch (error) {
 		return res.status(STATUS_CODE.SERVER_ERROR).send(error);
