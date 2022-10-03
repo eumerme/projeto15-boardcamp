@@ -19,17 +19,13 @@ async function getCustomers(req, res) {
 	const { cpf } = req.query;
 
 	try {
-		if (cpf) {
-			const { rows: customersFiltered } = await connection.query(
-				`SELECT * FROM "customers" WHERE (cpf) LIKE $1;`,
-				[`${cpf}%`]
-			);
-			return res.status(STATUS_CODE.OK).send(customersFiltered);
-		}
-
 		const { rows: customers } = await connection.query(
-			`SELECT * FROM "customers";`
+			`SELECT * FROM customers ${cpf ? `WHERE (cpf) LIKE $1` : ""};`,
+			cpf ? [`${cpf}%`] : ""
 		);
+		if (customers.length === 0) {
+			return res.sendStatus(STATUS_CODE.NOT_FOUND);
+		}
 		return res.status(STATUS_CODE.OK).send(customers);
 	} catch (error) {
 		return res.status(STATUS_CODE.SERVER_ERROR).send(error);
